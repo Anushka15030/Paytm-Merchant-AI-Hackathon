@@ -31,11 +31,11 @@ function Navbar({ merchant }) {
           <IconButton label={t("Notifications")}><Bell size={18} /></IconButton>
           <span className="pointer-events-none absolute right-[7px] top-[6px] h-2 w-2 rounded-full border-2 border-white bg-[#ff6b55]" />
         </div>
-        <button type="button" className="ml-1 flex items-center gap-2 rounded-full p-1 pr-2 transition hover:bg-[#f5f9fc]">
+        {/* <button type="button" className="ml-1 flex items-center gap-2 rounded-full p-1 pr-2 transition hover:bg-[#f5f9fc]">
           <div className="merchant-avatar flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold">A</div>
           <span className="hidden text-sm font-medium text-text-primary sm:block">Anushka</span>
           <ChevronDown size={14} className="hidden text-text-muted sm:block" />
-        </button>
+        </button> */}
       </div>
     </header>
   )

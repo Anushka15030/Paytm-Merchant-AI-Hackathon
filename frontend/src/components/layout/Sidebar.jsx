@@ -5,7 +5,7 @@ import {
   Sparkles,
   Megaphone,
   Bell,
-  Settings,
+  //Settings,
   Store,
 } from "lucide-react"
 import { NavLink } from "react-router-dom"
@@ -19,7 +19,7 @@ const navigation = [
   { label: "AI Insights", path: "/ai-insights", icon: Sparkles },
   { label: "Campaigns", path: "/campaigns", icon: Megaphone },
   { label: "Notifications", path: "/notifications", icon: Bell },
-  { label: "Settings", path: "/settings", icon: Settings },
+  //{ label: "Settings", path: "/settings", icon: Settings },
 ]
 
 function Sidebar({ mobile = false, merchant }) {
