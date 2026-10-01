@@ -233,12 +233,8 @@ function Dashboard() {
         <div className="flex min-h-48 items-center justify-center gap-2 rounded-2xl border border-border bg-white text-sm text-text-secondary"><LoaderCircle className="animate-spin" size={18} /> {t("Loading merchant data…")}</div>
       ) : summary && (
         <>
-          {!advanced && <div className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {metrics.map((metric) => <MetricCard key={metric.label} {...metric} />)}
-          </div>}
+          <BusinessBrief metrics={metrics} inventory={inventory} insights={insights} />
           {advanced ? (
-            <>
-            <BusinessBrief metrics={metrics} inventory={inventory} insights={insights} />
             <div className="grid gap-5 xl:grid-cols-2">
               <ChartCard title={t("Product sales comparison")} subtitle={t("Units sold in the last 7 and 30 days")} icon={ChartNoAxesCombined}>
                 {visibleInventory.length ? (
@@ -269,7 +265,6 @@ function Dashboard() {
                 ) : <p className="py-20 text-center text-sm text-text-secondary">{t("No matching products found.")}</p>}
               </ChartCard>
             </div>
-            </>
           ) : (
             <ChartCard title={t("Sales by category")} subtitle={t("7-day estimate using units sold × current product price")} icon={BarChart3}>
               {categorySales.length ? (
