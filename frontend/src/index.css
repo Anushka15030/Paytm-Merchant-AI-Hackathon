@@ -72,6 +72,36 @@ button { cursor: pointer; }
 .mobile-nav { scrollbar-width: none; }
 .mobile-nav::-webkit-scrollbar { display: none; }
 
+.business-brief { overflow: hidden; border: 1px solid #d8e6f5; border-radius: 22px; background: linear-gradient(145deg, #fff 0%, #f7fbff 100%); padding: 24px; box-shadow: 0 10px 28px rgb(18 50 85 / 6%); }
+.brief-header { display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+.brief-title-group { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.brief-mark { display: grid; width: 48px; height: 48px; flex: 0 0 auto; place-items: center; border-radius: 15px; color: #fff; background: linear-gradient(145deg, #00baf2, #0750b5); box-shadow: 0 5px 12px rgb(0 91 181 / 20%); }
+.brief-heading-line { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.brief-heading-line h2 { margin: 0; color: #102a43; font-size: 23px; line-height: 1.2; font-weight: 750; letter-spacing: -.04em; }
+.brief-report-label { padding: 5px 10px; border-radius: 999px; color: #174b90; background: #e8f1ff; font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.brief-title-group p { margin: 6px 0 0; color: #71849a; font-size: 13px; }
+.brief-status { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; padding: 10px 14px; border: 1px solid #e5f2ec; border-radius: 999px; color: #168553; background: #fff; font-size: 13px; font-weight: 700; }
+.brief-status svg { color: #13a66b; }
+.brief-status-dot { width: 8px; height: 8px; margin-left: 3px; border-radius: 50%; background: #12b76a; }
+.brief-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.brief-priority { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 16px 18px; border-left: 4px solid #f79009; border-radius: 0 14px 14px 0; background: linear-gradient(90deg, #fff8ec, #fffdf9); }
+.brief-priority-icon { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border-radius: 50%; color: #c4770a; background: #ffecd0; }
+.brief-priority p { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; color: #40556b; font-size: 15px; }.brief-priority strong { color: #102a43; }
+.brief-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 18px; padding-top: 16px; border-top: 1px solid #e8eef4; }
+.brief-play { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 9px; padding: 0 20px; border: 0; border-radius: 999px; color: #fff; background: #0750b5; box-shadow: 0 5px 12px rgb(7 80 181 / 18%); font-size: 14px; font-weight: 700; transition: background .15s, transform .15s; }
+.brief-play:hover { background: #063f91; transform: translateY(-1px); }.brief-play:focus-visible,.brief-languages button:focus-visible,.brief-script-toggle:focus-visible { outline: 3px solid #91dfff; outline-offset: 2px; }
+.brief-control-right { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 9px; }
+.brief-languages { display: flex; gap: 2px; padding: 4px; border: 1px solid #edf1f5; border-radius: 999px; background: #fff; }
+.brief-languages button { padding: 7px 11px; border: 0; border-radius: 999px; color: #71849a; background: transparent; font-size: 12px; font-weight: 650; }
+.brief-languages button.selected { color: #fff; background: #0750b5; box-shadow: 0 2px 5px rgb(7 80 181 / 20%); }
+.brief-script-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 12px; border: 1px solid #edf1f5; border-radius: 999px; color: #43586d; background: #fff; font-size: 13px; font-weight: 650; }
+.brief-script-toggle > svg:first-child { color: #0750b5; }.brief-script-toggle.open > svg:last-child { transform: rotate(180deg); }
+.brief-script { margin-top: 14px; padding: 16px 18px; border: 1px solid #e5edf5; border-radius: 14px; color: #465c71; background: #fff; font-size: 13px; line-height: 1.7; }
+.brief-script p { margin: 0; }.brief-script .brief-script-label { margin-bottom: 5px; color: #71849a; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.brief-spin { animation: brief-spin 1s linear infinite; } @keyframes brief-spin { to { transform: rotate(360deg); } }
+@media (max-width: 900px) { .brief-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .business-brief { padding: 17px; border-radius: 18px; }.brief-header { align-items: flex-start; flex-direction: column; }.brief-heading-line h2 { font-size: 20px; }.brief-title-group p { font-size: 12px; line-height: 1.5; }.brief-status { align-self: flex-end; margin-top: -4px; }.brief-metrics { gap: 9px; }.brief-priority { align-items: flex-start; padding: 14px 12px; }.brief-priority p { flex-direction: column; gap: 2px; font-size: 14px; }.brief-controls { align-items: stretch; flex-direction: column; }.brief-play { width: 100%; }.brief-control-right { justify-content: space-between; }.brief-languages button { padding: 7px 9px; font-size: 11px; } }
+
 @media (max-width: 1023px) {
   .mobile-nav { display: flex !important; }
   .workspace-main { padding-bottom: 28px; }

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { Activity, ArrowUpRight, BarChart3, ChartNoAxesCombined, LoaderCircle, Sparkles } from "lucide-react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Activity, ArrowUpRight, BarChart3, ChartNoAxesCombined, LoaderCircle, Sparkles, AudioLines, Volume2, Pause, FileText, ChevronDown, CheckCircle2 } from "lucide-react"
 import {
   Bar,
   BarChart,
@@ -20,6 +20,77 @@ import api, { getApiError } from "../lib/api"
 import { useT, useLocale } from "../lib/i18n"
 
 const stockColors = ["#12b76a", "#f79009", "#e5484d"]
+const briefLanguages = ["Hinglish", "हिंदी", "English"]
+
+function BusinessBrief({ metrics, inventory, insights }) {
+  const [language, setLanguage] = useState("Hinglish")
+  const [scriptOpen, setScriptOpen] = useState(false)
+  const [audioState, setAudioState] = useState("idle")
+  const timerRef = useRef(null)
+  const lowStockProducts = inventory.filter((product) => Number(product.stock) <= Number(product.min_stock))
+  const lowStockInsights = (insights?.insights || []).filter((item) => item.type === "LOW_STOCK" && lowStockProducts.some((product) => product.id === item.product_id))
+  const priorityAction = lowStockInsights.find((item) => item.recommended_action)?.recommended_action
+  const priorityText = lowStockProducts.length ? `${priorityAction || "Restock review"}: ${lowStockProducts.map((product) => product.name).join(", ")}` : ""
+  const reportMetrics = metrics.map((metric) => `${metric.label}: ${metric.value}. ${metric.detail}.`)
+  const reportText = [
+    language === "हिंदी" ? "आज का बिज़नेस ब्रीफ़।" : language === "English" ? "Today’s business brief." : "Aaj ka business brief.",
+    ...reportMetrics,
+    priorityText && `${language === "हिंदी" ? "अगली प्राथमिकता" : language === "English" ? "Tomorrow’s priority" : "Kal ki priority"}: ${priorityText}.`,
+  ].filter(Boolean).join(" ")
+  useEffect(() => () => {
+    window.speechSynthesis?.cancel()
+    window.clearTimeout(timerRef.current)
+  }, [])
+  const playReport = () => {
+    if (audioState === "playing" || audioState === "loading") {
+      window.speechSynthesis?.cancel()
+      window.clearTimeout(timerRef.current)
+      setAudioState("idle")
+      return
+    }
+    setAudioState("loading")
+    timerRef.current = window.setTimeout(() => {
+      if (!window.speechSynthesis) { setAudioState("idle"); return }
+      const utterance = new SpeechSynthesisUtterance(reportText)
+      utterance.lang = language === "हिंदी" ? "hi-IN" : language === "English" ? "en-IN" : "hi-IN"
+      utterance.onstart = () => setAudioState("playing")
+      utterance.onend = () => setAudioState("idle")
+      utterance.onerror = () => setAudioState("idle")
+      window.speechSynthesis.speak(utterance)
+    }, 180)
+  }
+  return (
+    <section className="business-brief mb-6" aria-labelledby="business-brief-title">
+      <header className="brief-header">
+        <div className="brief-title-group">
+          <div className="brief-mark"><Sparkles size={21} /></div>
+          <div>
+            <div className="brief-heading-line"><h2 id="business-brief-title">Today’s Business Brief</h2><span className="brief-report-label">End of Day Report</span></div>
+            <p>Business insights and spoken summary from your dashboard data</p>
+          </div>
+        </div>
+        <div className="brief-status"><AudioLines size={17} /><span className="brief-status-dot" />Audio Ready</div>
+      </header>
+      <div className="brief-metrics">
+        {metrics.map((metric) => <MetricCard key={metric.label} {...metric} />)}
+      </div>
+      {priorityText && <div className="brief-priority"><div className="brief-priority-icon"><CheckCircle2 size={20} /></div><p><strong>Tomorrow’s Priority:</strong><span>{priorityText}</span></p></div>}
+      <div className="brief-controls">
+        <button type="button" className="brief-play" onClick={playReport} aria-live="polite">
+          {audioState === "loading" ? <LoaderCircle size={19} className="brief-spin" /> : audioState === "playing" ? <Pause size={19} /> : <Volume2 size={19} />}
+          {audioState === "loading" ? "Preparing report…" : audioState === "playing" ? "Pause Voice Report" : "Play Voice Report"}
+        </button>
+        <div className="brief-control-right">
+          <div className="brief-languages" role="group" aria-label="Voice report language">
+            {briefLanguages.map((choice) => <button key={choice} type="button" aria-pressed={language === choice} className={language === choice ? "selected" : ""} onClick={() => { if (audioState !== "idle") { window.speechSynthesis?.cancel(); window.clearTimeout(timerRef.current); setAudioState("idle") }; setLanguage(choice) }}>{choice}</button>)}
+          </div>
+          <button type="button" className={`brief-script-toggle ${scriptOpen ? "open" : ""}`} aria-expanded={scriptOpen} onClick={() => setScriptOpen((open) => !open)}><FileText size={18} /> Script <ChevronDown size={16} /></button>
+        </div>
+      </div>
+      {scriptOpen && <div className="brief-script"><p className="brief-script-label">Voice report · {language}</p><p>{reportText || "No sales, order, or insight data is available for the report."}</p></div>}
+    </section>
+  )
+}
 
 function MetricCard({ label, value, detail, tone = "blue" }) {
   return (
@@ -53,6 +124,7 @@ function Dashboard() {
   const [advanced, setAdvanced] = useState(false)
   const [summary, setSummary] = useState(null)
   const [inventory, setInventory] = useState([])
+  const [insights, setInsights] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -60,12 +132,14 @@ function Dashboard() {
     setLoading(true)
     setError("")
     try {
-      const [dashboardResponse, inventoryResponse] = await Promise.all([
+      const [dashboardResponse, inventoryResponse, insightsResponse] = await Promise.all([
         api.get("/dashboard"),
         api.get("/inventory"),
+        api.get("/insights").catch(() => ({ data: { insights: [] } })),
       ])
       setSummary(dashboardResponse.data)
       setInventory(inventoryResponse.data)
+      setInsights(insightsResponse.data)
     } catch (requestError) {
       setError(getApiError(requestError))
     } finally {
@@ -159,10 +233,12 @@ function Dashboard() {
         <div className="flex min-h-48 items-center justify-center gap-2 rounded-2xl border border-border bg-white text-sm text-text-secondary"><LoaderCircle className="animate-spin" size={18} /> {t("Loading merchant data…")}</div>
       ) : summary && (
         <>
-          <div className={`mb-5 grid gap-4 sm:grid-cols-2 ${advanced ? "xl:grid-cols-3" : "xl:grid-cols-3"}`}>
+          {!advanced && <div className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {metrics.map((metric) => <MetricCard key={metric.label} {...metric} />)}
-          </div>
+          </div>}
           {advanced ? (
+            <>
+            <BusinessBrief metrics={metrics} inventory={inventory} insights={insights} />
             <div className="grid gap-5 xl:grid-cols-2">
               <ChartCard title={t("Product sales comparison")} subtitle={t("Units sold in the last 7 and 30 days")} icon={ChartNoAxesCombined}>
                 {visibleInventory.length ? (
@@ -193,6 +269,7 @@ function Dashboard() {
                 ) : <p className="py-20 text-center text-sm text-text-secondary">{t("No matching products found.")}</p>}
               </ChartCard>
             </div>
+            </>
           ) : (
             <ChartCard title={t("Sales by category")} subtitle={t("7-day estimate using units sold × current product price")} icon={BarChart3}>
               {categorySales.length ? (
