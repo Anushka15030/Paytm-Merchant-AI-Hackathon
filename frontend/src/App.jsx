@@ -9,22 +9,25 @@ import AIInsights from "./pages/AIInsights"
 import Campaigns from "./pages/Campaigns"
 import Notifications from "./pages/Notifications"
 import Settings from "./pages/Settings"
+import { LocaleProvider } from "./lib/i18n"
 
 function App() {
   return (
-    <BrowserRouter>
-      <DashboardLayout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/ai-insights" element={<AIInsights />} />
-          <Route path="/campaigns" element={<Campaigns />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-      </DashboardLayout>
-    </BrowserRouter>
+    <LocaleProvider>
+      <BrowserRouter>
+        <DashboardLayout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/ai-insights" element={<AIInsights />} />
+            <Route path="/campaigns" element={<Campaigns />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+        </DashboardLayout>
+      </BrowserRouter>
+    </LocaleProvider>
   )
 }
 

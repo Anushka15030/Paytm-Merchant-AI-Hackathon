@@ -1,11 +1,13 @@
 import { Search, X } from "lucide-react"
 import IconButton from "./IconButton"
+import { useT } from "../../lib/i18n"
 
 function SearchInput({
   value,
   onChange,
   placeholder = "Search...",
 }) {
+  const t = useT()
   return (
     <div className="relative w-full">
       <Search
@@ -17,7 +19,7 @@ function SearchInput({
         type="text"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
+        placeholder={t(placeholder)}
         className="
           h-10 w-full rounded-input
           border border-border
@@ -35,7 +37,7 @@ function SearchInput({
       {value && (
         <div className="absolute right-1 top-1/2 -translate-y-1/2">
           <IconButton
-            label="Clear search"
+            label={t("Clear search")}
             size="sm"
             onClick={() => onChange("")}
           >

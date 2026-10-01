@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 import { NavLink } from "react-router-dom"
 import PaytmBusinessLogo from "./PaytmBusinessLogo"
+import { useT } from "../../lib/i18n"
 
 const navigation = [
   { label: "Dashboard", path: "/", icon: LayoutDashboard },
@@ -22,6 +23,7 @@ const navigation = [
 ]
 
 function Sidebar({ mobile = false, merchant }) {
+  const t = useT()
   const merchantName = merchant?.name || "Shree Ganesh General Store"
   const merchantLocation = merchant?.location || "Pune, Maharashtra"
   return (
@@ -34,14 +36,14 @@ function Sidebar({ mobile = false, merchant }) {
           <div className="mx-4 mt-5 flex items-center gap-3 rounded-xl bg-[#f5f9fc] px-3 py-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-primary shadow-sm"><Store size={18} /></div>
             <div className="min-w-0">
-              <p className="truncate text-xs font-semibold text-text-primary">Merchant Copilot</p>
-              <p className="text-[11px] text-text-secondary">AI Business Partner</p>
+              <p className="truncate text-xs font-semibold text-text-primary">{t("Merchant Copilot")}</p>
+              <p className="text-[11px] text-text-secondary">{t("AI Business Partner")}</p>
             </div>
           </div>
-          <p className="nav-section-label px-6 pb-2 pt-7">Workspace</p>
+          <p className="nav-section-label px-6 pb-2 pt-7">{t("Workspace")}</p>
         </>
       )}
-      <nav className={`${mobile ? "flex min-w-max gap-1 px-3 py-2" : "flex-1 space-y-1 px-3 pb-4"}`} aria-label={mobile ? "Mobile navigation" : "Main navigation"}>
+      <nav className={`${mobile ? "flex min-w-max gap-1 px-3 py-2" : "flex-1 space-y-1 px-3 pb-4"}`} aria-label={mobile ? t("Mobile navigation") : t("Main navigation")}>
         {navigation.map((item) => {
           const Icon = item.icon
           return (
@@ -52,14 +54,14 @@ function Sidebar({ mobile = false, merchant }) {
               className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${mobile ? "whitespace-nowrap" : ""} ${isActive ? "nav-link-active" : "text-text-secondary hover:bg-[#f5f9fc] hover:text-[#007eb5]"}`}
             >
               <Icon size={18} strokeWidth={1.9} />
-              <span>{item.label}</span>
+              <span>{t(item.label)}</span>
             </NavLink>
           )
         })}
       </nav>
       {!mobile && (
         <div className="mx-4 mb-4 rounded-xl border border-[#e7edf3] bg-white p-3.5">
-          <p className="text-[10px] font-semibold uppercase tracking-[.14em] text-text-muted">Your store</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[.14em] text-text-muted">{t("Your store")}</p>
           <p className="mt-2 truncate text-sm font-semibold text-text-primary">{merchantName}</p>
           <p className="mt-0.5 text-xs text-text-secondary">{merchantLocation}</p>
         </div>

@@ -1,4 +1,5 @@
 import Badge from "./Badge"
+import { useT } from "../../lib/i18n"
 
 const statusConfig = {
   low_stock: {
@@ -32,6 +33,7 @@ const statusConfig = {
 }
 
 function StatusBadge({ status }) {
+  const t = useT()
   const config = statusConfig[status] || {
     label: status,
     variant: "default",
@@ -39,7 +41,7 @@ function StatusBadge({ status }) {
 
   return (
     <Badge variant={config.variant}>
-      {config.label}
+      {t(config.label)}
     </Badge>
   )
 }
