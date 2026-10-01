@@ -1,0 +1,99 @@
+{
+  "name": "Merchant Copilot - Restock Reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "ac4414a8-2320-494b-9de0-8b0183a3a411",
+      "name": "Check every minute",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8002/api/inventory/reminders/due",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "a28f8d46-40ad-4eb2-99bc-c33ab54ec0fa",
+      "name": "Fetch due reminders",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputs = $input.all();\nconst reminders = inputs.flatMap(({ json }) => {\n  if (Array.isArray(json)) return json;\n  if (Array.isArray(json.body)) return json.body;\n  return json?.id ? [json] : [];\n});\nreturn reminders.filter((item) => item?.id).map((item) => ({ json: item }));"
+      },
+      "id": "6d4748c3-02c8-4b55-b1bb-3ebf440fb4eb",
+      "name": "Prepare reminder items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "merchant-copilot@example.com",
+        "toEmail": "merchant@example.com",
+        "subject": "={{ 'Restock reminder: ' + $('Prepare reminder items').item.json.product }}",
+        "emailFormat": "text",
+        "text": "={{ 'Your reminder for ' + $('Prepare reminder items').item.json.product + ': your restock request was rejected. Consider reviewing stock and placing a new order.\n\nRequested quantity: ' + $('Prepare reminder items').item.json.quantity + '\nSupplier: ' + ($('Prepare reminder items').item.json.supplier || 'Not set') + '\nRequest ID: ' + $('Prepare reminder items').item.json.id }}",
+        "options": {}
+      },
+      "id": "d335018f-9091-4db2-8d88-70c87897330f",
+      "name": "Send reminder email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [920, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://host.docker.internal:8002/api/inventory/restock-requests/' + $('Prepare reminder items').item.json.id + '/reminder-sent' }}",
+        "options": {}
+      },
+      "id": "2dc3b4bb-ab57-4ca2-9409-1af275c93ca5",
+      "name": "Record successful delivery",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1160, 300]
+    }
+  ],
+  "connections": {
+    "Check every minute": {
+      "main": [[{ "node": "Fetch due reminders", "type": "main", "index": 0 }]]
+    },
+    "Fetch due reminders": {
+      "main": [[{ "node": "Prepare reminder items", "type": "main", "index": 0 }]]
+    },
+    "Prepare reminder items": {
+      "main": [[{ "node": "Send reminder email", "type": "main", "index": 0 }]]
+    },
+    "Send reminder email": {
+      "main": [[{ "node": "Record successful delivery", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c72a3d52-8bf7-4cad-b6b7-9a51924f1951",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
