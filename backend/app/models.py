@@ -60,6 +60,8 @@ class Product(Base):
         nullable=True
     )
 
+    supplier_phone = Column(String, nullable=True)
+
     sales_7d = Column(
         Integer,
         default=0
@@ -95,6 +97,17 @@ class Order(Base):
         nullable=False,
         default=0
     )
+
+    public_code = Column(String, nullable=True, unique=True, index=True)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=True, index=True)
+    quantity = Column(Integer, nullable=True)
+    unit_price = Column(Float, nullable=True)
+    payment_status = Column(String, nullable=False, default="PENDING")
+    invoice_id = Column(String, nullable=True)
+    customer_phone = Column(String, nullable=True)
+    customer_message = Column(String, nullable=True)
+    source = Column(String, nullable=True)
+    paid_at = Column(DateTime, nullable=True)
 
     status = Column(
         String,

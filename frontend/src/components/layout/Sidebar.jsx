@@ -5,6 +5,7 @@ import {
   Sparkles,
   Megaphone,
   Bell,
+  MessageCircle,
   //Settings,
   Store,
 } from "lucide-react"
@@ -16,6 +17,8 @@ const navigation = [
   { label: "Dashboard", path: "/", icon: LayoutDashboard },
   { label: "Inventory", path: "/inventory", icon: Package },
   { label: "Orders", path: "/orders", icon: ShoppingBag },
+  { label: "WhatsApp Order Demo", path: "/whatsapp-demo", icon: MessageCircle },
+  { label: "Ask your business", path: "/chat", icon: MessageCircle },
   { label: "AI Insights", path: "/ai-insights", icon: Sparkles },
   { label: "Campaigns", path: "/campaigns", icon: Megaphone },
   { label: "Notifications", path: "/notifications", icon: Bell },

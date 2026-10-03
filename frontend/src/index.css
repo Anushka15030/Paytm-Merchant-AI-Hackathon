@@ -72,6 +72,11 @@ button { cursor: pointer; }
 .mobile-nav { scrollbar-width: none; }
 .mobile-nav::-webkit-scrollbar { display: none; }
 
+@keyframes chat-bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .45; } 30% { transform: translateY(-4px); opacity: 1; } }
+.chat-dot { width: 6px; height: 6px; border-radius: 50%; background: #1684ad; animation: chat-bounce 1.2s infinite ease-in-out; }
+.chat-dot.delay-1 { animation-delay: .15s; }
+.chat-dot.delay-2 { animation-delay: .3s; }
+
 .business-brief { overflow: hidden; border: 1px solid #d8e6f5; border-radius: 22px; background: linear-gradient(145deg, #fff 0%, #f7fbff 100%); padding: 24px; box-shadow: 0 10px 28px rgb(18 50 85 / 6%); }
 .brief-header { display: flex; justify-content: space-between; align-items: center; gap: 18px; }
 .brief-title-group { display: flex; align-items: center; gap: 14px; min-width: 0; }

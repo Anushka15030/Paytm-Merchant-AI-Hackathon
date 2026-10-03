@@ -1,12 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import inspect, text
+from dotenv import load_dotenv
+from pathlib import Path
+
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 from .database import Base, engine
 from .routes.inventory import router as inventory_router
 from .routes.dashboard import router as dashboard_router
 from .routes.insights import router as insights_router
 from .routes.orders import router as orders_router
+from .routes.chat import router as chat_router
 
 from . import models
 
@@ -38,6 +43,21 @@ with engine.begin() as connection:
                         f"ADD COLUMN {column_name} {column_type}"
                     )
                 )
+    if "products" in existing_tables:
+        product_columns = {column["name"] for column in inspect(engine).get_columns("products")}
+        if "supplier_phone" not in product_columns:
+            connection.execute(text("ALTER TABLE products ADD COLUMN supplier_phone VARCHAR"))
+    if "orders" in existing_tables:
+        order_columns = {column["name"] for column in inspect(engine).get_columns("orders")}
+        order_additions = {
+            "public_code": "VARCHAR", "product_id": "INTEGER", "quantity": "INTEGER",
+            "unit_price": "FLOAT", "payment_status": "VARCHAR NOT NULL DEFAULT 'PENDING'",
+            "invoice_id": "VARCHAR", "customer_phone": "VARCHAR", "customer_message": "VARCHAR",
+            "source": "VARCHAR", "paid_at": "DATETIME",
+        }
+        for column_name, column_type in order_additions.items():
+            if column_name not in order_columns:
+                connection.execute(text(f"ALTER TABLE orders ADD COLUMN {column_name} {column_type}"))
 
 
 app = FastAPI(
@@ -58,6 +78,7 @@ app.include_router(inventory_router)
 app.include_router(dashboard_router)
 app.include_router(insights_router)
 app.include_router(orders_router)
+app.include_router(chat_router)
 
 
 @app.get("/")

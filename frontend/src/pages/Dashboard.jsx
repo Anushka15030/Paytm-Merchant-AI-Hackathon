@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Activity, ArrowUpRight, BarChart3, ChartNoAxesCombined, LoaderCircle, Sparkles, AudioLines, Volume2, Pause, FileText, ChevronDown, CheckCircle2 } from "lucide-react"
+import { Activity, ArrowUpRight, BarChart3, ChartNoAxesCombined, LoaderCircle, Sparkles, AudioLines, Volume2, Pause, FileText, ChevronDown, CheckCircle2, MessageCircle } from "lucide-react"
+import { Link } from "react-router-dom"
 import {
   Bar,
   BarChart,
@@ -189,9 +190,14 @@ function Dashboard() {
           <h1 className="text-2xl font-bold tracking-tight sm:text-[30px]">{t("Your business, at a glance.")}</h1>
           <p className="welcome-copy mt-2 max-w-lg text-sm leading-6">{t("Your Paytm for Business workspace, with a little extra intelligence to help you grow.")}</p>
         </div>
-        <Button variant="light" className="btn-light shrink-0 self-start shadow-sm sm:self-center">
-          {t("View Insights")} <ArrowUpRight className="ml-2" size={16} />
-        </Button>
+        <div className="flex shrink-0 flex-wrap gap-2 self-start sm:self-center">
+          <Link to="/ai-insights" className="btn-light inline-flex items-center justify-center rounded-button border border-white/70 bg-white px-4 py-2 text-sm font-medium text-[#006da9] shadow-sm transition hover:bg-[#eefaff]">
+            {t("View Insights")} <ArrowUpRight className="ml-2" size={16} />
+          </Link>
+          <Link to="/chat" className="inline-flex items-center justify-center gap-2 rounded-button border border-white/70 bg-[#0750b5] px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#063f91] focus:outline-none focus:ring-4 focus:ring-white/30">
+            <MessageCircle size={16} /> {t("Ask your business")}
+          </Link>
+        </div>
       </section>
 
       <section className="mb-6 flex flex-col gap-4">

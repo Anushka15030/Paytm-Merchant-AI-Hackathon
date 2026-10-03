@@ -33,5 +33,12 @@ Open the local URL printed by Vite. Its development proxy forwards `/api` and `/
 - Inventory list and restock request endpoint
 - Stock and overstock insights
 - Invoice generation and preview
+- Merchant chat grounded in current product, inventory, sales, and order records
+
+## Merchant chat
+
+Open `/chat` and set `SARVAM_API_KEY` in `backend/.env`. Install the updated backend requirements and restart FastAPI. The key stays server-side. Chat keeps up to eight recent turns in the browser and applies a per-IP request limit. Cognee memory remains disabled; the no-op provider and adapter are scaffolding only until authentication and tenant-scoped data are developed.
+
+For local development, the project’s alternate Vite config uses port `5182` and proxies API calls to backend port `8002`.
 
 The backend's sales summary is currently returned as fixed values by its dashboard route. The category chart estimates sales from units sold and current product prices. The restock endpoint currently returns an acknowledgement without persisting a restock record or changing stock.
